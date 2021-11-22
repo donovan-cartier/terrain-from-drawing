@@ -1,5 +1,7 @@
 var canvas = document.querySelector('.drawCanvas');
 var exportButton = document.getElementById('export');
+var heightInput = document.getElementById('heightValue');
+var zInput = document.getElementById('zValue');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -7,6 +9,8 @@ var ctx = canvas.getContext('2d');
 
 var startingPos = { x: 0, y: 0 };
 var endingPos = { x: 0, y: 0 };
+var objectHeight;
+var zOrigin;
 var isMouseDown = false;
 var objectCoordinate = [];
 
@@ -36,7 +40,9 @@ function draw(e) {
   ctx.strokeStyle = document.getElementById("colorpick").value; ;
 
   ctx.strokeRect(startingPos.x,startingPos.y,width,height);
-  objectCoordinate.push([startingPos.x, startingPos.y, endingPos.x, endingPos.y])
+  objectHeight = heightInput.value;
+  zOrigin = zInput.value;
+  objectCoordinate.push([startingPos.x, startingPos.y, endingPos.x, endingPos.y, objectHeight, zOrigin])
   
   console.log(objectCoordinate);
 }
@@ -70,7 +76,6 @@ exportButton.addEventListener("click", function(){
     var vertX1 = element[0];
     var vertY1 = element[1];
 
-
     // ending pos
     var vertX3 = element[2];
     var vertY3 = element[3];
@@ -81,20 +86,26 @@ exportButton.addEventListener("click", function(){
     var vertX4 = vertX1;
     var vertY4 = vertY3;
     
+    // object height
+    var heightZ = element[4];
+
+    // object Z origin
+    var zStart = element[5];
+
 
     console.log("vertice 1 : " + vertX1 + "," + vertY1 + "vertice 2 : " + vertX2 + "," + vertY2 + "vertice 3 : " + vertX3 + "," + vertY3 + "vertice 4 : " + vertX4 + "," + vertY4);
 
-    var vertex1 = "v " + vertX1 + " " + vertY1 + " " + "0";
-    var vertex2 = "v " + vertX2 + " " + vertY2 + " " + "0";
-    var vertex3 = "v " + vertX3 + " " + vertY3 + " " + "0";
-    var vertex4 = "v " + vertX4 + " " + vertY4 + " " + "0";
-    var vertex5 = "v " + vertX1 + " " + vertY1 + " " + "100";
-    var vertex6 = "v " + vertX2 + " " + vertY2 + " " + "100";
-    var vertex7 = "v " + vertX3 + " " + vertY3 + " " + "100";
-    var vertex8 = "v " + vertX4 + " " + vertY4 + " " + "100";
+    var vertex1 = "v " + vertX1 + " " + vertY1 + " " + zStart;
+    var vertex2 = "v " + vertX2 + " " + vertY2 + " " + zStart;
+    var vertex3 = "v " + vertX3 + " " + vertY3 + " " + zStart;
+    var vertex4 = "v " + vertX4 + " " + vertY4 + " " + zStart;
+    var vertex5 = "v " + vertX1 + " " + vertY1 + " " + heightZ;
+    var vertex6 = "v " + vertX2 + " " + vertY2 + " " + heightZ;
+    var vertex7 = "v " + vertX3 + " " + vertY3 + " " + heightZ;
+    var vertex8 = "v " + vertX4 + " " + vertY4 + " " + heightZ;
     fileText.push(vertex1, vertex2, vertex3, vertex4, vertex5, vertex6, vertex7, vertex8);
 
-    var faceOrder = 8 * currentObjectCount
+    var faceOrder = 8 * currentObjectCount;
     var face1 = "f " + (1 + faceOrder) + " " + (5 + faceOrder) + " " + (6 + faceOrder) + " " + (2 + faceOrder);
     var face2 = "f " + (2 + faceOrder) + " " + (6 + faceOrder) + " " + (7 + faceOrder) + " " + (3 + faceOrder);
     var face3 = "f " + (3 + faceOrder) + " " + (7 + faceOrder) + " " + (8 + faceOrder) + " " + (4 + faceOrder);
