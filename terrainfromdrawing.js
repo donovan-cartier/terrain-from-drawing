@@ -2,6 +2,7 @@ var canvas = document.querySelector('.drawCanvas');
 var exportButton = document.getElementById('export');
 var heightInput = document.getElementById('heightValue');
 var zInput = document.getElementById('zValue');
+var objectNameInput = document.getElementById('objectName');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -13,6 +14,7 @@ var objectHeight;
 var zOrigin;
 var isMouseDown = false;
 var objectCoordinate = [];
+var objectName;
 
 document.addEventListener('mousedown', setStartingPosition);
 document.addEventListener('mouseup', setEndingPosition);
@@ -42,7 +44,8 @@ function draw(e) {
   ctx.strokeRect(startingPos.x,startingPos.y,width,height);
   objectHeight = heightInput.value;
   zOrigin = zInput.value;
-  objectCoordinate.push([startingPos.x, startingPos.y, endingPos.x, endingPos.y, objectHeight, zOrigin])
+  objectName = objectNameInput.value;
+  objectCoordinate.push([startingPos.x, startingPos.y, endingPos.x, endingPos.y, objectHeight, zOrigin, objectName])
   
   console.log(objectCoordinate);
 }
@@ -91,6 +94,12 @@ exportButton.addEventListener("click", function(){
 
     // object Z origin
     var zStart = element[5];
+    var offsetZ = parseInt(heightZ) + parseInt(zStart);
+
+    // get name
+    if(element[6] !== ""){
+      fileText.push("o " + element[6]);
+    }
 
 
     console.log("vertice 1 : " + vertX1 + "," + vertY1 + "vertice 2 : " + vertX2 + "," + vertY2 + "vertice 3 : " + vertX3 + "," + vertY3 + "vertice 4 : " + vertX4 + "," + vertY4);
@@ -99,10 +108,10 @@ exportButton.addEventListener("click", function(){
     var vertex2 = "v " + vertX2 + " " + vertY2 + " " + zStart;
     var vertex3 = "v " + vertX3 + " " + vertY3 + " " + zStart;
     var vertex4 = "v " + vertX4 + " " + vertY4 + " " + zStart;
-    var vertex5 = "v " + vertX1 + " " + vertY1 + " " + heightZ;
-    var vertex6 = "v " + vertX2 + " " + vertY2 + " " + heightZ;
-    var vertex7 = "v " + vertX3 + " " + vertY3 + " " + heightZ;
-    var vertex8 = "v " + vertX4 + " " + vertY4 + " " + heightZ;
+    var vertex5 = "v " + vertX1 + " " + vertY1 + " " + offsetZ;
+    var vertex6 = "v " + vertX2 + " " + vertY2 + " " + offsetZ;
+    var vertex7 = "v " + vertX3 + " " + vertY3 + " " + offsetZ;
+    var vertex8 = "v " + vertX4 + " " + vertY4 + " " + offsetZ;
     fileText.push(vertex1, vertex2, vertex3, vertex4, vertex5, vertex6, vertex7, vertex8);
 
     var faceOrder = 8 * currentObjectCount;
