@@ -1,8 +1,16 @@
 var canvas = document.querySelector('.drawCanvas');
+var shapeContainer = document.querySelector('#shapeContainer');
 var exportButton = document.getElementById('export');
 var heightInput = document.getElementById('heightValue');
 var zInput = document.getElementById('zValue');
 var objectNameInput = document.getElementById('objectName');
+
+// Define tools
+
+var undoButton = document.getElementById('undo');
+var drawButton = document.getElementById('draw');
+var moveButton = document.getElementById('move');
+var eraseButton = document.getElementById('erase');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -19,6 +27,11 @@ var objectName;
 document.addEventListener('mousedown', setStartingPosition);
 document.addEventListener('mouseup', setEndingPosition);
 // document.addEventListener('mousemove', displayPath);
+
+
+function handleMouseEvents(){
+  
+}
 
 // new position from mouse event
 function setStartingPosition(e) {
@@ -38,10 +51,54 @@ function draw(e) {
 
   var width = endingPos.x - startingPos.x;
   var height = endingPos.y - startingPos.y;
-  ctx.lineWidth = 5;
-  ctx.strokeStyle = document.getElementById("colorpick").value; ;
 
-  ctx.strokeRect(startingPos.x,startingPos.y,width,height);
+  // ctx.lineWidth = 5;
+  // ctx.strokeStyle = document.getElementById("colorpick").value; ;
+
+  // ctx.strokeRect(startingPos.x,startingPos.y,width,height);
+
+  var newShape = document.createElement("div");
+
+  newShape.style.border = "5px solid black";
+  newShape.style.position = "absolute";
+  newShape.style.boxSizing = "border-box";
+
+
+  if (width<0){
+    newShape.style.left = endingPos.x + "px";
+    width *= -1;
+    console.log("width was negative and is now " + width);
+    newShape.style.width = width + "px";
+    var temp = startingPos.x;
+    startingPos.x = endingPos.x;
+    endingPos.x = temp;
+    
+
+  } else {
+    console.log("width was positive and is now " + width);
+    newShape.style.left = startingPos.x + "px";
+    newShape.style.width = width + "px";
+  }
+
+  if (height<0){
+    newShape.style.top = endingPos.y + "px";
+    height *= -1;
+    console.log("height was negative and is now " + height);
+    newShape.style.height = height + "px";
+    var temp = startingPos.y;
+    startingPos.y = endingPos.y;
+    endingPos.y = temp;
+
+  } else {
+    console.log("width was positive and is now " + width);
+    newShape.style.top = startingPos.y + "px";
+    newShape.style.height = height + "px";
+  }
+
+
+
+  shapeContainer.appendChild(newShape);
+
   objectHeight = heightInput.value;
   zOrigin = zInput.value;
   objectName = objectNameInput.value;
