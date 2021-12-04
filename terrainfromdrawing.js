@@ -1,36 +1,107 @@
+// Variables
 var canvas = document.querySelector('.drawCanvas');
 var shapeContainer = document.querySelector('#shapeContainer');
 var exportButton = document.getElementById('export');
+
+// Define inputs
 var heightInput = document.getElementById('heightValue');
 var zInput = document.getElementById('zValue');
 var objectNameInput = document.getElementById('objectName');
 
 // Define tools
-
 var undoButton = document.getElementById('undo');
 var drawButton = document.getElementById('draw');
 var moveButton = document.getElementById('move');
 var eraseButton = document.getElementById('erase');
+var currentMode = "drawing";
 
+// Define canvas
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 var ctx = canvas.getContext('2d');
 
+// Define shape properties
 var startingPos = { x: 0, y: 0 };
 var endingPos = { x: 0, y: 0 };
 var objectHeight;
 var zOrigin;
-var isMouseDown = false;
 var objectCoordinate = [];
 var objectName;
+var objectList = [];
 
-document.addEventListener('mousedown', setStartingPosition);
-document.addEventListener('mouseup', setEndingPosition);
+var mousePosition;
+var offset = [0,0];
+var isMouseDown = false;
+var clickedShape;
+
+// Mouse listeners
+document.addEventListener('mousedown', handleMouseEvents);
+document.addEventListener('mouseup', setEndingPosition, true);
 // document.addEventListener('mousemove', displayPath);
 
+// Button modes
+undoButton.onclick = function(){
+  console.log("undo");
+  shapeContainer.lastChild.remove();
+  objectCoordinate.pop();
 
-function handleMouseEvents(){
-  
+  // For now, remove last two elements because of canvas glitch
+  shapeContainer.lastChild.remove();
+  objectCoordinate.pop();
+
+}
+
+
+drawButton.onclick = function(){
+  initDrawingBehavior();
+}
+
+function initDrawingBehavior(){
+  eraseButton.classList.add('disabledButton');
+  moveButton.classList.add('disabledButton');
+
+  drawButton.classList.remove('disabledButton');
+  undoButton.disabled = false;
+
+  currentMode = "drawing";
+
+}
+
+moveButton.onclick = function(){
+  eraseButton.classList.add('disabledButton');
+  drawButton.classList.add('disabledButton');
+
+  moveButton.classList.remove('disabledButton');
+  undoButton.disabled = true;
+
+  currentMode = "moving";
+
+  objectList.forEach(element => {
+    element.classList.add('selectableShape');
+  });
+}
+
+eraseButton.onclick = function(){
+  drawButton.classList.add('disabledButton');
+  moveButton.classList.add('disabledButton');
+
+  eraseButton.classList.remove('disabledButton');
+  undoButton.disabled = true;
+
+  currentMode = "erasing";
+
+}
+
+initDrawingBehavior();
+
+
+
+
+function handleMouseEvents(e){
+  switch(currentMode){
+    case 'drawing':
+      setStartingPosition(e);
+  }
 }
 
 // new position from mouse event
@@ -38,13 +109,16 @@ function setStartingPosition(e) {
   startingPos.x = e.clientX;
   startingPos.y = e.clientY;
   isMouseDown = true;
+  
 }
 
 function setEndingPosition(e) {
+  isMouseDown = false;
+  if(currentMode == 'drawing'){
     endingPos.x = e.clientX;
     endingPos.y = e.clientY;
-    isMouseDown = false;
     draw(e);
+  }
   }
   
 function draw(e) {
@@ -102,9 +176,13 @@ function draw(e) {
   objectHeight = heightInput.value;
   zOrigin = zInput.value;
   objectName = objectNameInput.value;
-  objectCoordinate.push([startingPos.x, startingPos.y, endingPos.x, endingPos.y, objectHeight, zOrigin, objectName])
-  
+  objectCoordinate.push([startingPos.x, startingPos.y, endingPos.x, endingPos.y, objectHeight, zOrigin, objectName]);
+  objectList.push(newShape);
   console.log(objectCoordinate);
+
+  newShape.addEventListener('mousedown', function(e) {
+    dragShape(e, newShape);
+  }, true);
 }
 
 function download(filename, text) {
@@ -217,3 +295,26 @@ exportButton.addEventListener("click", function(){
   download("export.obj",fileText.join('\r\n'))
 })
 
+
+function dragShape(e, shape){
+  isMouseDown = true;
+  offset = [
+    shape.offsetLeft - e.clientX,
+    shape.offsetTop - e.clientY
+  ];
+  clickedShape = shape;
+}
+
+document.addEventListener('mousemove', function(event) {
+  event.preventDefault();
+  if (isMouseDown && currentMode == "moving") {
+      mousePosition = {
+  
+          x : event.clientX,
+          y : event.clientY
+  
+      };
+      clickedShape.style.left = (mousePosition.x + offset[0]) + 'px';
+      clickedShape.style.top  = (mousePosition.y + offset[1]) + 'px';
+  }
+}, true);

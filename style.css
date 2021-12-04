@@ -31,9 +31,13 @@ canvas{
 
 #shapeContainer{
     position: fixed;
-    z-index: -100;
+    z-index: 10;
 }
 
-#tools>button:focus{
-    background-color: red;
+.disabledButton{
+    opacity: 0.5;
+}
+
+.selectableShape{
+    cursor: pointer;
 }
