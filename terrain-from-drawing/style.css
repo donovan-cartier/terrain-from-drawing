@@ -1,0 +1,43 @@
+body{
+    height: 100vh;
+    margin: 0;
+    display:flex; 
+    flex-direction:column;
+    -webkit-user-select: none;  /* Chrome, Safari, Opera */
+    -moz-user-select: none; /* Firefox all */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none;   
+}
+
+header, footer{
+    margin: 0;
+    height: 6vh;
+    background-color: #0D3B66;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: white;
+}
+
+footer{
+    margin-top: auto;
+    justify-content: flex-end;
+}
+
+canvas{
+    position: fixed;
+    z-index: -200;
+}
+
+#shapeContainer{
+    position: fixed;
+    z-index: 10;
+}
+
+.disabledButton{
+    opacity: 0.5;
+}
+
+.selectableShape{
+    cursor: pointer;
+}
